@@ -98,9 +98,9 @@ stays decided by the tests, not encoded in any component.
 1. `formcontrolname` attributes (`ContactForm`'s fields) - Angular's own
    reactive-form binding, the most stable handle available. Found by
    dumping the real DOM rather than guessing from the accessibility tree;
-   also what exposed the duplicate-`id` bug (STRATEGY.md #3), since
-   `getByLabel()` couldn't tell `Ім'я` and `Прізвище` apart but
-   `formcontrolname` can.
+   also what exposed a duplicate-`id` bug on the contact form (both
+   `Ім'я` and `Прізвище` render `id="input-29"`), since `getByLabel()`
+   couldn't tell them apart but `formcontrolname` can.
 2. Structural classes the app renders consistently
    (`app-short-info-card`, `.time-cell`, `mydatepicker`'s `.myDpDaycell`).
 3. Visible (Ukrainian) text, only where the first two aren't available -

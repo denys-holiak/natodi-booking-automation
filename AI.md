@@ -17,9 +17,9 @@ this assignment.
   names, roles, accessible names, the actual Angular route components
   behind each step) and turn that into the locator that's actually stable
   - `formcontrolname` over `getByLabel` on the contact form, for instance,
-    once we found the duplicate `id` bug that broke label association (see
-    `STRATEGY.md` bug #3). That's minutes of work instead of a couple of
-    hours of trial and error per screen.
+    once we found a duplicate `id` bug that broke label association. That's
+    minutes of work instead of a couple of hours of trial and error per
+    screen.
 - **First-pass implementation of decisions I made.** Once I decided how a
   piece should work - e.g. partitioning `SlotPicker`'s day selection by
   worker index instead of relying on randomization alone - Claude wrote

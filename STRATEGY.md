@@ -179,24 +179,34 @@ design with one.
   but worth fixing before more junk data accumulates and needs manual
   cleanup.
 
-**#3 - Clicking either name label on the contact form focuses the wrong field**
+**#3 - Company deletion's confirmation step can never be completed**
 
-- Description: entirely on the **public booking widget** (no admin panel
-  involved) - the last step of the booking flow, "Контакти для запису",
-  where a client fills in their name, phone, email and socials before
-  submitting. This is the same screen `ContactForm.ts` automates.
+- Description: found while following this assignment's own "After you
+  finish" instructions - specifically the fallback path it describes
+  ("if cancelling doesn't work... that's a finding"). This is in the
+  **admin panel**, Settings → Account → "Видалення акаунта" ("Delete
+  account"), a separate, more destructive action than cancelling the
+  subscription (it deletes the company and all its data - bookings,
+  clients, staff, finances - immediately and irreversibly).
 - Steps to reproduce:
-  1. Open the booking widget's "Контакти для запису" step.
-  2. Click directly on the `Прізвище` label text (not the input itself).
-- Expected result: focus moves to the `Прізвище` input, the one the label
-  actually names.
-- Actual result: focus moves to the `Ім'я` input instead. Both inputs
-  render with `id="input-29"`, and both `<label>` elements point at
-  `for="input-29"` - invalid HTML that breaks the label-to-field
-  association clicks and screen readers both rely on.
-- Severity: **Low** - the fields still work if you click directly on the
-  input, but it's a real accessibility defect (screen reader users in
-  particular rely on that label association) and a sign the form isn't
-  generating field ids dynamically.
-- Priority: **Low** - cosmetic/accessibility fix, no rush, but cheap to
-  fix once someone's already touching this form's markup.
+  1. Admin panel → Налаштування → Акаунт → "Видалити" under "Видалення
+     акаунта".
+  2. Step 3 of 3 asks: "Введіть назву компанії для підтвердження" (enter
+     the company name to confirm), with a hint line below the input
+     labelled "Введіть:" ("Type:") that's clearly meant to show the exact
+     expected value.
+  3. Type the company's actual, correct name (confirmed against
+     Компанія's own page - "Sugar & Silk Studio") into the field.
+- Expected result: typing the correct company name enables "Видалити
+  компанію назавжди" ("Delete company forever").
+- Actual result: the "Введіть:" hint line renders completely empty - the
+  expected confirmation value never gets populated - and the delete
+  button stays disabled regardless of what's typed, correct name or not.
+  The confirmation step, and therefore account deletion itself, cannot be
+  completed through the UI at all.
+- Severity: **High** - a core account-management action (the only
+  self-service way to delete your own data) is completely non-functional,
+  not just visually broken.
+- Priority: **High** - broken exactly where the product should be most
+  trustworthy (irreversible data deletion), and directly on the path this
+  assignment's own instructions pointed at.
