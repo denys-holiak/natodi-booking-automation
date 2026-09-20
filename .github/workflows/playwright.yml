@@ -1,0 +1,45 @@
+name: Playwright Tests
+
+on:
+  pull_request:
+    branches: ['main']
+
+jobs:
+  test:
+    timeout-minutes: 30
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint & typecheck
+        run: |
+          npm run lint
+          npm run typecheck
+
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps chromium
+
+      # The happy-path test creates a real appointment on a live, shared
+      # Natodi account with a small pool of slots, so it deliberately does
+      # NOT run unattended in CI on every PR - only the API tests and the
+      # negative cases, which are side-effect-free, run here.
+      - name: Run API tests
+        run: npm run test:api
+
+      - name: Run booking negative-case tests
+        run: npx playwright test --project=booking-e2e tests/booking/negative-cases.spec.ts
+        env:
+          # .env is gitignored (see README "Configuring the target booking
+          # page"), so CI needs these set explicitly - same values, not a
+          # secret, just not committed as a tracked file.
+          BOOKING_URL: ${{ vars.BOOKING_URL || 'https://book.natodi.com/-f7caa7f3?userId=e37acc82-b813-4abe-b67c-e1dca4928b2d' }}
+          BOOKING_SERVICE_NAME: ${{ vars.BOOKING_SERVICE_NAME || 'Шугаринг рук та ніг' }}
+          BOOKING_MASTER_NAME: ${{ vars.BOOKING_MASTER_NAME || 'Олена Гончарук' }}
