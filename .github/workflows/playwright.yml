@@ -8,6 +8,16 @@ jobs:
   test:
     timeout-minutes: 30
     runs-on: ubuntu-latest
+    # .env is gitignored (see README "Configuring the target booking
+    # page"), so CI needs these set explicitly - same values, not a
+    # secret, just not committed as a tracked file. Needed even for the
+    # API-only job step below: fixtures.ts imports BookingWidget eagerly,
+    # and env.ts throws at import time if these are missing, regardless
+    # of whether a given test actually uses the bookingWidget fixture.
+    env:
+      BOOKING_URL: ${{ vars.BOOKING_URL || 'https://book.natodi.com/-f7caa7f3?userId=e37acc82-b813-4abe-b67c-e1dca4928b2d' }}
+      BOOKING_SERVICE_NAME: ${{ vars.BOOKING_SERVICE_NAME || 'Шугаринг рук та ніг' }}
+      BOOKING_MASTER_NAME: ${{ vars.BOOKING_MASTER_NAME || 'Олена Гончарук' }}
     steps:
       - uses: actions/checkout@v4
 
@@ -36,10 +46,3 @@ jobs:
 
       - name: Run booking negative-case tests
         run: npx playwright test --project=booking-e2e tests/booking/negative-cases.spec.ts
-        env:
-          # .env is gitignored (see README "Configuring the target booking
-          # page"), so CI needs these set explicitly - same values, not a
-          # secret, just not committed as a tracked file.
-          BOOKING_URL: ${{ vars.BOOKING_URL || 'https://book.natodi.com/-f7caa7f3?userId=e37acc82-b813-4abe-b67c-e1dca4928b2d' }}
-          BOOKING_SERVICE_NAME: ${{ vars.BOOKING_SERVICE_NAME || 'Шугаринг рук та ніг' }}
-          BOOKING_MASTER_NAME: ${{ vars.BOOKING_MASTER_NAME || 'Олена Гончарук' }}
